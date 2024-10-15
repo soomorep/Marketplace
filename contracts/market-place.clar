@@ -110,3 +110,15 @@
   )
 )
 
+;; Private functions
+(define-private (update-reputation (user principal) (change int))
+  (let
+    (
+      (current-reputation (get-reputation user))
+    )
+    (map-set UserReputation
+      { user: user }
+      { score: (+ (get score current-reputation) change) }
+    )
+  )
+)
