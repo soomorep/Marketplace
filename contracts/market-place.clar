@@ -75,3 +75,21 @@
     (ok trade-id)
   )
 )
+
+
+(define-public (complete-trade (trade-id uint))
+  (let
+    (
+      (trade (unwrap! (get-trade trade-id) err-not-found))
+    )
+    (asserts! (is-eq tx-sender (get provider trade)) err-owner-only)
+    (asserts! (not (get completed trade)) err-trade-not-active)
+    (map-set Trades
+      { trade-id: trade-id }
+      (merge trade { completed: true })
+    )
+    (update-reputation (get requester trade) 1)
+    (update-reputation (get provider trade) 1)
+    (ok true)
+  )
+)
