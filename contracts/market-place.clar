@@ -93,3 +93,20 @@
     (ok true)
   )
 )
+
+(define-public (refund-trade (trade-id uint))
+  (let
+    (
+      (trade (unwrap! (get-trade trade-id) err-not-found))
+    )
+    (asserts! (is-eq tx-sender (get provider trade)) err-owner-only)
+    (asserts! (not (get completed trade)) err-trade-not-active)
+    (asserts! (not (get refunded trade)) err-trade-not-active)
+    (map-set Trades
+      { trade-id: trade-id }
+      (merge trade { refunded: true })
+    )
+    (ok true)
+  )
+)
+
