@@ -54,3 +54,24 @@
     (ok service-id)
   )
 )
+
+(define-public (initiate-trade (service-id uint))
+  (let
+    (
+      (service (unwrap! (get-service service-id) err-not-found))
+      (trade-id (+ (var-get trade-counter) u1))
+    )
+    (asserts! (get active service) err-trade-not-active)
+    (map-set Trades
+      { trade-id: trade-id }
+      { requester: tx-sender,
+        provider: (get provider service),
+        service-id: service-id,
+        amount: (get price service),
+        completed: false,
+        refunded: false }
+    )
+    (var-set trade-counter trade-id)
+    (ok trade-id)
+  )
+)
