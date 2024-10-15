@@ -39,3 +39,18 @@
 (define-read-only (get-reputation (user principal))
   (default-to { score: 0 } (map-get? UserReputation { user: user }))
 )
+
+;; Public functions
+(define-public (list-service (description (string-utf8 256)) (price uint))
+  (let
+    (
+      (service-id (+ (var-get service-counter) u1))
+    )
+    (map-set Services
+      { service-id: service-id }
+      { provider: tx-sender, description: description, price: price, active: true }
+    )
+    (var-set service-counter service-id)
+    (ok service-id)
+  )
+)
